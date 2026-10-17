@@ -1,0 +1,49 @@
+import java.util.Scanner; // Импортируем класс для чтения ввода с клавиатуры
+
+public class chokolat {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in); // Создаем сканер
+
+        // Считываем исходные данные от пользователя
+        System.out.print("Введите ваш бюджет: ");
+        int money = scanner.nextInt();
+
+        System.out.print("Введите цену шоколадки: ");
+        int cost = scanner.nextInt();
+
+        System.out.print("Введите количество купленных шоколадок для бонуса (k): ");
+        int promoBuy = scanner.nextInt();
+
+        System.out.print("Введите количество фантиков для обмена (m): ");
+        int promoWrap = scanner.nextInt();
+
+        // Считаем, сколько шоколадок купили изначально
+        int purchased = money / cost;
+        int totalEaten = purchased; // Общее количество съеденных
+        int wrappersHave = purchased; // Текущее количество фантиков на руках
+
+        // Запускаем цикл обменов
+        while (wrappersHave >= promoWrap || purchased >= promoBuy) {
+
+            // Сначала проверяем обмен ФАНТИКОВ на шоколадки
+            if (wrappersHave >= promoWrap) {
+                int newChoco = wrappersHave / promoWrap; // Сколько шоколадок получили
+                totalEaten += newChoco;                  // Прибавляем к общему количеству
+                wrappersHave = (wrappersHave % promoWrap) + newChoco; // Считаем новые фантики
+            }
+
+            // Затем проверяем акцию за КУПЛЕННЫЕ шоколадки
+            if (purchased >= promoBuy) {
+                int bonusChoco = purchased / promoBuy;   // Сколько бесплатных дают
+                totalEaten += bonusChoco;                // Съедаем их
+                wrappersHave += bonusChoco;              // За них тоже получаем фантики
+                purchased = purchased % promoBuy;        // Убираем использованные купленные
+            }
+        }
+
+        // Выводим итоговый результат
+        System.out.println("Вы сможете съесть: " + totalEaten + " шоколадок.");
+
+        scanner.close(); // Закрываем сканер
+    }
+}
