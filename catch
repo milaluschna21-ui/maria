@@ -1,0 +1,51 @@
+
+import java.util.Scanner; // Подключаем ввод с клавиатуры
+
+// Создаём своё исключение для короткого пароля
+class ShortPasswordException extends Exception {
+
+    // Создаём конструктор исключения
+    public ShortPasswordException(String message) {
+        super(message); // Передаём текст ошибки
+    }
+}
+
+// Главный класс программы
+public class Password {
+
+    // Главный метод, с которого начинается программа
+    public static void main(String[] args) {
+
+        // Создаём Scanner для ввода пароля
+        Scanner scanner = new Scanner(System.in);
+
+        try { // Начинаем блок, в котором может возникнуть ошибка
+
+            // Просим пользователя ввести пароль
+            System.out.print("Введите пароль: ");
+
+            // Считываем пароль
+            String password = scanner.nextLine();
+
+            // Проверяем, меньше ли длина пароля 8 символов
+            if (password.length() < 8) {
+
+                // Если пароль короткий, вызываем своё исключение
+                throw new ShortPasswordException("Пароль должен содержать минимум 8 символов!");
+            }
+
+            // Если ошибки нет, выводим сообщение об успехе
+            System.out.println("Пароль принят!");
+
+        } catch (ShortPasswordException e) { // Ловим наше исключение
+
+            // Выводим сообщение об ошибке
+            System.out.println("Ошибка: " + e.getMessage());
+
+        } finally { // Этот блок выполняется в конце
+
+            // Закрываем Scanner
+            scanner.close();
+        }
+    }
+}
