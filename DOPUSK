@@ -1,0 +1,98 @@
+
+import java.util.ArrayList;
+import java.util.Random;
+
+public class pt {
+
+    public static void main(String[] args) throws InterruptedException {
+
+        int size = 100000; // Количество чисел
+        int workers = 4; // Количество потоков
+
+        ArrayList<Integer> list = new ArrayList<>(); // Создаём список
+        Random rand = new Random(); // Создаём случайные числа
+
+        // Заполняем список числами
+        for (int i = 0; i < size; i++) {
+            list.add(rand.nextInt(100)); // Добавляем случайное число
+        }
+
+        // Создаём массив для потоков и их результатов
+        Thread[] workerThreads = new Thread[workers];
+        long[] results = new long[workers];
+
+        int numbersPerThread = size / workers; // Чисел на один поток
+
+        // Начинаем параллельное сложение
+        long time1 = System.nanoTime();
+
+        // Запускаем потоки
+        for (int i = 0; i < workers; i++) {
+
+            int index = i; // Номер потока
+            int from = i * numbersPerThread; // Начало части
+            int to = from + numbersPerThread; // Конец части
+
+            workerThreads[i] = new Thread(() -> {
+
+                long result = 0; // Сумма своей части
+
+                // Складываем числа своей части
+                for (int j = from; j < to; j++) {
+                    result += list.get(j);
+                }
+
+                results[index] = result; // Сохраняем сумму
+            });
+
+            workerThreads[i].start(); // Запускаем поток
+        }
+
+        // Ждём завершения всех потоков
+        for (int i = 0; i < workers; i++) {
+            workerThreads[i].join();
+        }
+
+        // Получаем общую сумму потоков
+        long total = 0;
+
+        for (int i = 0; i < workers; i++) {
+            total += results[i];
+        }
+
+        long time2 = System.nanoTime(); // Конец параллельного сложения
+
+        // Считаем время работы потоков
+        long multithreadTime = (time2 - time1) / 1000;
+
+        // Теперь складываем все числа обычным способом
+        long normalSum = 0;
+        long time3 = System.nanoTime(); // Начало обычного сложения
+
+        for (int value : list) {
+            normalSum += value;
+        }
+
+        long time4 = System.nanoTime(); // Конец обычного сложения
+
+        // Считаем время обычного сложения
+        long normalTime = (time4 - time3) / 1000;
+
+        // Выводим результаты
+        System.out.println("Количество чисел: " + size);
+        System.out.println("Количество потоков: " + workers);
+
+        System.out.println("Сумма потоками: " + total);
+        System.out.println("Время потоков: " + multithreadTime + " мкс");
+
+        System.out.println("Обычная сумма: " + normalSum);
+        System.out.println("Время обычного сложения: " + normalTime + " мкс");
+
+        // Сравниваем суммы
+        if (total == normalSum) {
+            System.out.println("Суммы совпадают");
+        } else {
+            System.out.println("Суммы не совпадают");
+        }
+    }
+}
